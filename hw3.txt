@@ -1,0 +1,48 @@
+Carter Nettesheim
+ECE5780
+HW3
+
+3.1	Memory Address Ranges
+		
+				|Start(HEX)		|End(HEX
+	==========================================
+	EEPROM		|0x000000		|0x0FFFFF
+	RAM1		|0x600000		|0x6FFFFF
+	RAM2		|0xA00000		|0xBFFFFF
+	IO Device	|0xE00000		|0xE00007
+
+3.2	Memory Address Ranges
+
+				|Start(HEX)		|End(HEX		|IO/Memory
+	========================================================
+	ChipA		|0x00000		|0xEFFFF		|IO
+	ChipB		|0x80000		|0x8FFFF		|IO
+	ChipC		|0x00000		|0x000FF		|Memory
+	ChipD		|0x80000		|0x80007		|Memory
+
+3.3	0x1A6B4C & 0x1A6B4D ->
+	A18 = 0
+	A19 = 1
+	A20 = 1
+	Therefore it will be addressed to chip B. No, the data will not be stored correctly. The two
+	addresses are only 1 bit apart. Since the address line gets bit shifted right by 1 it knocks
+	off the least significant bit. Both addresses are the same address after the bit shift, which
+	would incorrectly store the data.
+
+3.4	Since A20 = 0 in this instance, both 0x12 and 0x8A would be written to chip B, as long as WRL
+	is asserted. And technically if WRH was asserted then 0x00 would be written to chip A in both 
+	cases. This will happen because A20 = 0 is also tied to to chip A, and chip A is tied to the 
+	most significant byte of the data line. This is all assuming that 0x12 and 0x8A are both the
+	data and the addresses. If not, the question doesn't give us enough information to know what
+	chip the data is stored on, because there is no addresses.
+
+3.5	Memory Address Mappings
+
+				|Width		|CE	|Start(HEX)		|End(HEX	|Size
+	================================================================
+	ChipA		|Byte		|0	|0x000000		|0x0FFFFF	|512 KB
+	ChipB		|Byte		|0	|0x000000		|0x0FFFFF	|512 KB
+	ChipC		|Byte		|1	|0x100000		|0x1FFFFF	|512 KB
+
+	Chip A and chip B have the same memory addresses. It depends on if the data is the most
+	significant byte or the least significant byte and if WRL and WRH are asserted or not.
