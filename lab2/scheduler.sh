@@ -1,3 +1,3 @@
 clear
 g++ scheduler.cpp
-./a.out
+./a.out input.txt output.txt
