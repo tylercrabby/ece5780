@@ -6,12 +6,13 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <queue>
 
 using namespace std;
 
 typedef struct {
 	char name;
-	int ex_time;
+	int exe_time;
 	int period;
 } task;
 
