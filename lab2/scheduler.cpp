@@ -1,4 +1,12 @@
+/*
+Carter Nettesheim
+Tyler Crabb
+Lab 2 ~ Rate Monotonic and Earliest Deadline First Scheduling
+23MAR2023
+Dr. Phillips' ECE5780 Embedded Real-Time Systems
+*/
 #include "scheduler.h"
+
 
 void release_tasks(queue<task>* q, vector<task> tasks, int time) {
 	if (time = 0) {
@@ -15,44 +23,55 @@ void release_tasks(queue<task>* q, vector<task> tasks, int time) {
 	}
 }
 
+/*
+This big bad scheduling program takes an input file of tasks, their runtimes, and release windows and creates a schedule to run them all by.
+The schedules will be written to an output text file that the user will name.
+*/
 int main(int argc, char *argv[]) {
+	// We need files to operate on.
 	ifstream input;
 	ofstream output;
 
+	// Open and create files named by the user to get our scheduling constraints and write the schedule to.
 	input.open(argv[1]);
 	output.open(argv[2], ios::out);
 
-	// get number of tasks and simulation time
+	// Fetch the number of tasks, their names, their simulation time, and release times (in milliseconds).
 	int num_tasks;
 	int num_a_tasks;
+	
 	int sim_time;	
 	int time;
-	string temp_str;
-	vector<string> lines;
-	vector<task> tasks;
-	vector<task> a_tasks;
+	
+	string temp_str;			// A temporary spot to save the task data before it gets moved to the task struct.
+	
+	vector<string> lines;			// Build an array of strings to store the task data in.
+	vector<task> tasks;			// Build an array of task structs to store task data in.
+	vector<task> a_tasks;			// Build an array of asynchronous task structs to store the asyncronous task data in.
 	queue<task> release_q;
 	task cur_task;
 	int cur_exe_time_left = 0;
-	input >> num_tasks;
-	input >> sim_time;
+	input >> num_tasks;			// How many total tasks are we working with?
+	input >> sim_time;			// How many milliseconds do we have to build a schedule with?
 	
 	getline(input, temp_str);
 
+	// Step through the input file's tasks and read their names, durations, and release data.
 	for (int i = 0; i < num_tasks; i++) {
 		getline(input, temp_str);
 		lines.push_back(temp_str);
 	}
 
 	for (int i = 0; i < num_tasks; i++) {
-		stringstream ss(lines[i]);
-		task temp_t;
+		stringstream ss(lines[i]);	// Load the task data from the queue.
+		task temp_t;			// This temp_t task struct will be the frame to store the data in.
 		char comma;
 
 		ss >> temp_t.name >> comma >> temp_t.exe_time >> comma >> temp_t.period;
-		tasks.push_back(temp_t);
+		tasks.push_back(temp_t);	// Back of the queue with you.
 	}
 
+	// Step through the tasks and show their data to the console.
 	for (int i = 0; i < num_tasks; i++) {
 		cout << tasks[i].name << ' ' << tasks[i].exe_time << ' ' << tasks[i].period << endl;
 	}
