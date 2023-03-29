@@ -1,18 +1,33 @@
 #include "scheduler.h"
 
 void release_tasks(queue<task>* q, vector<task> tasks, int time) {
-	if (time = 0) {
+	if (time == 0) {
 		for (int i = 0; i < tasks.size(); i++) {
 			q->push(tasks[i]);
+			cout << "task pushed" << endl;
 		}
 	}
 	else {
 		for (int i = 0; i < tasks.size(); i++) {
 			if (time % tasks[i].period == 0) {
 				q->push(tasks[i]);
+				cout << "task pushed: " << time << " " << tasks[i].period << " " << time % tasks[i].period << endl;
 			}
 		}
 	}
+}
+
+vector<task> release_a_tasks(queue<task>* q, vector<task> tasks, int time) {
+	if (time != 0) {
+		for (int i = 0; i < tasks.size(); i++) {
+			if (time % tasks[i].period == 0) {
+				q->push(tasks[i]);
+				tasks.erase(tasks.begin() + i);
+				cout << "a task pushed: " << time << " " << tasks[i].period << " " << time % tasks[i].period << endl;	
+			}
+		}
+	}
+	return tasks;
 }
 
 int main(int argc, char *argv[]) {
@@ -33,6 +48,7 @@ int main(int argc, char *argv[]) {
 	vector<task> a_tasks;
 	queue<task> release_q;
 	task cur_task;
+	task prev_task;
 	int cur_exe_time_left = 0;
 	input >> num_tasks;
 	input >> sim_time;
@@ -86,14 +102,21 @@ int main(int argc, char *argv[]) {
 	for (time = 0; time < sim_time; time++) {
 		//check which tasks to release
 		release_tasks(&release_q, tasks, time);
+		a_tasks = release_a_tasks(&release_q, a_tasks, time);
 		//execute first task in the release queue
 		if (cur_exe_time_left == 0) {
+			prev_task = cur_task;
 			if (!release_q.empty()) {
 				cur_task = release_q.front();
 				release_q.pop();
 				cur_exe_time_left = cur_task.exe_time - 1;
 			}
-			output << time << ": task " << cur_task.name << "\ttime remaining " << cur_exe_time_left << endl;
+			if (cur_task.name == prev_task.name) {
+				output << "idle" << endl;
+			}
+			else {
+				output << time << ": task " << cur_task.name << "\ttime remaining " << cur_exe_time_left << endl;
+			}
 		}
 		else {
 			cur_exe_time_left--;
