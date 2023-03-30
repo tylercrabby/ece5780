@@ -7,13 +7,14 @@
 #include <sstream>
 #include <vector>
 #include <queue>
+#include "task_manager.h"
+#include "file_manager.h"
+#include "rm.h"
+#include "edf.h"
 
 using namespace std;
 
-typedef struct {
-	char name;
-	int exe_time;
-	int period;
-} task;
+string task_state[] = {"unreleased", "released", "running", "prempted", "completed"};
 
 #endif
+

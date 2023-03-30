@@ -1,0 +1,32 @@
+#include "task_manager.h"
+
+//release_tasks checks the queue of tasks to see which of the tasks needs to be processed first.
+void release_tasks(queue<task>* q, vector<task> tasks, int time) {
+	if (time == 0) {
+		for (int i = 0; i < tasks.size(); i++) {
+		q -> push(tasks[i]);
+		cout << "Task " << tasks[i].name << " was pushed at time " << time << "." << endl;
+		}
+	}
+	else {
+		for (int i = 0; i < tasks.size(); i++) {
+			if (time % tasks[i].period == 0) {
+				q->push(tasks[i]);
+				cout << "task pushed: " << time << " " << tasks[i].period << " " << time % tasks[i].period << endl;
+			}
+		}
+	}
+}
+
+vector<task> release_a_tasks(queue<task>* q, vector<task> tasks, int time) {
+	if (time != 0) {
+		for (int i = 0; i < tasks.size(); i++) {
+			if (time % tasks[i].period == 0) {
+				q->push(tasks[i]);
+				tasks.erase(tasks.begin() + i);
+				cout << "a task pushed: " << time << " " << tasks[i].period << " " << time % tasks[i].period << endl; 
+			}
+		}
+	}
+	return tasks;
+}
