@@ -12,6 +12,9 @@ void rate_monotonic(int argc, char *argv[]) {
 	vector<task> tasks = fm.get_tasks();
 	vector<task> a_tasks = fm.get_a_tasks();
 
+	// set the task priority based on period **tie goes to first in the list**
+	tasks = set_priority(tasks);
+
 	// create a scheduling queue
 	queue<task> release_q;
 
@@ -25,6 +28,18 @@ void rate_monotonic(int argc, char *argv[]) {
 		// check which tasks to release
 		release_tasks(&release_q, tasks, time);
 		a_tasks = release_a_tasks(&release_q, a_tasks, time);
+
+		//task back = release_q.back();
+		//for (task i = release_q.front(); !is_task_equal(i, back); i = release_q.front()) {
+		//	i.task_state--;
+		//	
+		//	if (i.task_state < 0) {
+		//		cout << "\n************\nTask " << i.name << " missed it's deadline!\n**************" << endl;
+		//	}
+
+		//	release_q.pop();
+		//	release_q.push(i);
+		//}
 
 		// run algorithm
 		if (cur_exe_time_left == 0) {
