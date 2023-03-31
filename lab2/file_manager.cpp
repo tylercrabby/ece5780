@@ -48,15 +48,16 @@ FileManager::FileManager(int argc, char *argv[]) {
 	for (int i = 0; i < num_tasks; i++) {
 		stringstream ss(lines[i]);
 		task temp_t;
+		temp_t.task_state = 0;
 		char comma;
 
 		ss >> temp_t.name >> comma >> temp_t.exe_time >> comma >> temp_t.period;
 		tasks.push_back(temp_t);
 	}
 	
-	//for (int i = 0; i < num_tasks; i++) {
-	//	cout << tasks[i].name << ' ' << tasks[i].exe_time << ' ' << tasks[i].period << endl;
-	//}
+	for (int i = 0; i < num_tasks; i++) {
+		cout << tasks[i].name << ' ' << tasks[i].exe_time << ' ' << tasks[i].period << endl;
+	}
 
 	// Parse aperiodic data header
 	input >> num_a_tasks;
@@ -72,15 +73,16 @@ FileManager::FileManager(int argc, char *argv[]) {
 	for (int i = 0; i < num_a_tasks; i++) {
 		stringstream ss(lines[i]);
 		task temp_t;
+		temp_t.task_state = 0;
 		char comma;
 
 		ss >> temp_t.name >> comma >> temp_t.exe_time >> comma >> temp_t.period;
 		a_tasks.push_back(temp_t);
 	}
 
-	//for (int i = 0; i < num_a_tasks; i++) {
-	//	cout << a_tasks[i].name << ' ' << a_tasks[i].exe_time << ' ' << tasks[i].period << endl;
-	//}
+	for (int i = 0; i < num_a_tasks; i++) {
+		cout << a_tasks[i].name << ' ' << a_tasks[i].exe_time << ' ' << tasks[i].period << endl;
+	}
 }
 
 int FileManager::get_sim_time() {
