@@ -1,5 +1,6 @@
 #include "rm.h"
 
+// sets the task priority for the rate monotonic algorithm
 vector<task> set_priority(vector<task> tasks) {
 	sort(tasks.begin(), tasks.end(), compare_task); 
 	return tasks;
@@ -17,48 +18,97 @@ void rate_monotonic(int argc, char *argv[]) {
 
 	// create a scheduling queue
 	queue<task> release_q;
+	queue<task> release_aq;
 
 	// declare variables
 	task cur_task;
 	task prev_task;
+	task on_hold;
 	int cur_exe_time_left = 0;
+	int prev_exe_time_left = 0;
+	int hold_exe_time_left = 0;
+	int missed_deadlines = 0;
+	int preemptions = 0;
+	bool is_a = false;
+
+	cur_task.name = '+';
+	on_hold.name = '+';
+
+	// print out output file header
+	fm.output << "Running rate monotonic algorithm\n****************************************" << endl;
+	fm.output << "Simulation Time: " << fm.get_sim_time() << " ms" << endl << endl;
+	fm.output << fm.get_num_tasks() << " Periodic Tasks:" << endl;
+	
+	for (int i = 0; i < fm.get_num_tasks(); i++) {
+		fm.output << tasks[i].name << " " << tasks[i].exe_time << " " << tasks[i].period << endl;
+	}
+	
+	fm.output << endl;
+	fm.output << fm.get_num_a_tasks() << " Aperiodic Tasks:" << endl;
+
+	for (int i = 0; i < fm.get_num_a_tasks(); i++) {
+		fm.output << a_tasks[i].name << " " << a_tasks[i].exe_time << " " << a_tasks[i].period << endl;
+	}
+
+	fm.output << "****************************************\nBegin: logging significant events" << endl;
+	fm.output << "****************************************" << endl;
 
 	// run the rate monotonic algorithm
 	for (int time = 0; time < fm.get_sim_time(); time++) {
 		// check which tasks to release
-		release_tasks(&release_q, tasks, time);
-		a_tasks = release_a_tasks(&release_q, a_tasks, time);
+		fm.output << release_tasks(&release_q, tasks, time);
+		fm.output << release_a_tasks(&release_aq, a_tasks, time);
 
-		//task back = release_q.back();
-		//for (task i = release_q.front(); !is_task_equal(i, back); i = release_q.front()) {
-		//	i.task_state--;
-		//	
-		//	if (i.task_state < 0) {
-		//		cout << "\n************\nTask " << i.name << " missed it's deadline!\n**************" << endl;
-		//	}
-
-		//	release_q.pop();
-		//	release_q.push(i);
-		//}
 
 		// run algorithm
 		if (cur_exe_time_left == 0) {
+			if (cur_task.name != '+' && cur_task.name != prev_task.name) {
+				fm.output << "Time:\t" << time << "\t\tTask " << cur_task.name << " complete" << endl;
+			}
 			prev_task = cur_task;
 			if (!release_q.empty()) {
 				cur_task = release_q.front();
 				release_q.pop();
 				cur_exe_time_left = cur_task.exe_time - 1;
+				is_a = false;
 			}
-			if (cur_task.name == prev_task.name) {
-				fm.output << time << " idle" << endl;
+			// resume preempted task if there is slack time
+			else if (on_hold.name != '+') {
+				cur_task = on_hold;
+				is_a = true;
+				cur_exe_time_left = hold_exe_time_left;
+				on_hold.name = '+';
 			}
-			else {
-				fm.output << time << ": task " << cur_task.name << "\ttime remaining " << cur_exe_time_left << endl;
+			else if (!release_aq.empty()) {
+				cur_task = release_aq.front();
+				release_aq.pop();
+				cur_exe_time_left = cur_task.exe_time - 1;
+				is_a = true;
 			}
 		}
+		// check for preemptions
+		else if (!release_q.empty() && is_a && on_hold.name == '+') {
+			on_hold = cur_task;
+			hold_exe_time_left = cur_exe_time_left - 1;
+			
+			cur_task = release_q.front();
+			release_q.pop();
+			cur_exe_time_left = cur_task.exe_time - 1;
+			is_a = false;
+
+			fm.output << "Time:\t" << time << "\t\tTask " << cur_task.name << " preempted task " << on_hold.name << endl;
+			preemptions++;
+		}
+		// continue normal execution
 		else {
 			cur_exe_time_left--;
-			fm.output << time << ": task " << cur_task.name << "\ttime remaining " << cur_exe_time_left << endl;
 		}
+		// check deadlines
+		fm.output << check_deadline(cur_task, release_q, time, &missed_deadlines);
+		fm.output << check_a_deadline(release_q, time, &missed_deadlines);
 	}
+	
+	fm.output << endl << "****************************************" << endl;
+	fm.output << "Missed Deadlines: " << missed_deadlines << endl;
+	fm.output << "Preemptions: " << preemptions << endl;
 }

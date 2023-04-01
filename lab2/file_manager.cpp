@@ -55,10 +55,6 @@ FileManager::FileManager(int argc, char *argv[]) {
 		tasks.push_back(temp_t);
 	}
 	
-	for (int i = 0; i < num_tasks; i++) {
-		cout << tasks[i].name << ' ' << tasks[i].exe_time << ' ' << tasks[i].period << endl;
-	}
-
 	// Parse aperiodic data header
 	input >> num_a_tasks;
 	getline(input, temp_str);
@@ -78,10 +74,6 @@ FileManager::FileManager(int argc, char *argv[]) {
 
 		ss >> temp_t.name >> comma >> temp_t.exe_time >> comma >> temp_t.period;
 		a_tasks.push_back(temp_t);
-	}
-
-	for (int i = 0; i < num_a_tasks; i++) {
-		cout << a_tasks[i].name << ' ' << a_tasks[i].exe_time << ' ' << tasks[i].period << endl;
 	}
 }
 
