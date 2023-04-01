@@ -49,6 +49,7 @@ FileManager::FileManager(int argc, char *argv[]) {
 		stringstream ss(lines[i]);
 		task temp_t;
 		temp_t.task_state = 0;
+		temp_t.is_a = false;
 		char comma;
 
 		ss >> temp_t.name >> comma >> temp_t.exe_time >> comma >> temp_t.period;
@@ -70,6 +71,7 @@ FileManager::FileManager(int argc, char *argv[]) {
 		stringstream ss(lines[i]);
 		task temp_t;
 		temp_t.task_state = 0;
+		temp_t.is_a = true;
 		char comma;
 
 		ss >> temp_t.name >> comma >> temp_t.exe_time >> comma >> temp_t.period;

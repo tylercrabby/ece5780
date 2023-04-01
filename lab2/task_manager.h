@@ -17,6 +17,7 @@ typedef struct {
 
 	// We need a variable to track which state this task has been in.
 	int task_state = 0;
+	bool is_a;
 } task;
 
 const int IMPLICIT_DEADLINE = 500;

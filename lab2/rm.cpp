@@ -29,10 +29,9 @@ void rate_monotonic(int argc, char *argv[]) {
 	int hold_exe_time_left = 0;
 	int missed_deadlines = 0;
 	int preemptions = 0;
-	bool is_a = false;
 
-	cur_task.name = '+';
-	on_hold.name = '+';
+	cur_task.name = UNUSED_TASK;
+	on_hold.name = UNUSED_TASK;
 
 	// print out output file header
 	fm.output << "Running rate monotonic algorithm\n****************************************" << endl;
@@ -62,7 +61,7 @@ void rate_monotonic(int argc, char *argv[]) {
 
 		// run algorithm
 		if (cur_exe_time_left == 0) {
-			if (cur_task.name != '+' && cur_task.name != prev_task.name) {
+			if (cur_task.name != UNUSED_TASK && cur_task.name != prev_task.name) {
 				fm.output << "Time:\t" << time << "\t\tTask " << cur_task.name << " complete" << endl;
 			}
 			prev_task = cur_task;
@@ -70,31 +69,27 @@ void rate_monotonic(int argc, char *argv[]) {
 				cur_task = release_q.front();
 				release_q.pop();
 				cur_exe_time_left = cur_task.exe_time - 1;
-				is_a = false;
 			}
 			// resume preempted task if there is slack time
-			else if (on_hold.name != '+') {
+			else if (on_hold.name != UNUSED_TASK) {
 				cur_task = on_hold;
-				is_a = true;
 				cur_exe_time_left = hold_exe_time_left;
-				on_hold.name = '+';
+				on_hold.name = UNUSED_TASK;
 			}
 			else if (!release_aq.empty()) {
 				cur_task = release_aq.front();
 				release_aq.pop();
 				cur_exe_time_left = cur_task.exe_time - 1;
-				is_a = true;
 			}
 		}
 		// check for preemptions
-		else if (!release_q.empty() && is_a && on_hold.name == '+') {
+		else if (!release_q.empty() && cur_task.is_a && on_hold.name == UNUSED_TASK) {
 			on_hold = cur_task;
 			hold_exe_time_left = cur_exe_time_left - 1;
 			
 			cur_task = release_q.front();
 			release_q.pop();
 			cur_exe_time_left = cur_task.exe_time - 1;
-			is_a = false;
 
 			fm.output << "Time:\t" << time << "\t\tTask " << cur_task.name << " preempted task " << on_hold.name << endl;
 			preemptions++;

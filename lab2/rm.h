@@ -7,6 +7,8 @@
 #include "task_manager.h"
 #include "file_manager.h"
 
+#define UNUSED_TASK '+'
+
 using namespace std;
 
 vector<task> set_priority(vector<task> tasks);
