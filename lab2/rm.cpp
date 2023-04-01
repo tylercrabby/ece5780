@@ -69,17 +69,23 @@ void rate_monotonic(int argc, char *argv[]) {
 				cur_task = release_q.front();
 				release_q.pop();
 				cur_exe_time_left = cur_task.exe_time - 1;
+				fm.output << "Time:\t" << time << "\t\tTask " << cur_task.name << " start execution";
+				fm.output << "\t exe time: " << cur_task.exe_time << endl;
 			}
 			// resume preempted task if there is slack time
 			else if (on_hold.name != UNUSED_TASK) {
 				cur_task = on_hold;
 				cur_exe_time_left = hold_exe_time_left;
 				on_hold.name = UNUSED_TASK;
+				fm.output << "Time:\t" << time << "\t\tTask " << cur_task.name << " resume execution";
+				fm.output << "\t exe time: " << cur_exe_time_left + 1 << endl;
 			}
 			else if (!release_aq.empty()) {
 				cur_task = release_aq.front();
 				release_aq.pop();
 				cur_exe_time_left = cur_task.exe_time - 1;
+				fm.output << "Time:\t" << time << "\t\tTask " << cur_task.name << " start execution";
+				fm.output << "\t exe time: " << cur_task.exe_time << endl;
 			}
 		}
 		// check for preemptions
@@ -92,6 +98,8 @@ void rate_monotonic(int argc, char *argv[]) {
 			cur_exe_time_left = cur_task.exe_time - 1;
 
 			fm.output << "Time:\t" << time << "\t\tTask " << cur_task.name << " preempted task " << on_hold.name << endl;
+			fm.output << "Time:\t" << time << "\t\tTask " << cur_task.name << " start execution";
+			fm.output << "\t exe time: " << cur_exe_time_left + 1 << endl;
 			preemptions++;
 		}
 		// continue normal execution
@@ -103,6 +111,7 @@ void rate_monotonic(int argc, char *argv[]) {
 		fm.output << check_a_deadline(release_q, time, &missed_deadlines);
 	}
 	
+	fm.output << "Time:\t" << fm.get_sim_time() << "\t\tEnd of sim time " << endl;
 	fm.output << endl << "****************************************" << endl;
 	fm.output << "Missed Deadlines: " << missed_deadlines << endl;
 	fm.output << "Preemptions: " << preemptions << endl;
