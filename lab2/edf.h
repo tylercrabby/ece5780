@@ -12,12 +12,8 @@ using namespace std;
 bool earliest_deadline_first(int argc, char *argv[]);
 
 void combineTasks(vector<task>&, vector<task>&);
-
+ 
 void printTasks(vector<task>);
-void printTasks(vector<task>, vector<task>);
-
-void quickSort(vector<task>&, int, int);
-int partition(vector<task>&, int, int);
 
 void bubbleSort(vector<task>&);
 
