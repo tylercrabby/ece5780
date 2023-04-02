@@ -19,10 +19,12 @@ int main(int argc, char *argv[]) {
 //
 //	if (alg) {
 //		earliest_deadline_first(argc, argv);
+//		cout << "EDF finished successfully" << endl;
 //	}
 //	else {
 //		rate_monotonic(argc, argv);
-//	}
+//		cout << "RM finished successfully" << endl;
+//	}	
 	rate_monotonic(argc, argv);
 	
 	return 0;

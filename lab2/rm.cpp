@@ -27,7 +27,7 @@ void rate_monotonic(int argc, char *argv[]) {
 	int cur_exe_time_left = 0;
 	int prev_exe_time_left = 0;
 	int hold_exe_time_left = 0;
-	int missed_deadlines = 0;
+	vector<char> missed_deadlines;
 	int preemptions = 0;
 
 	cur_task.name = UNUSED_TASK;
@@ -65,6 +65,7 @@ void rate_monotonic(int argc, char *argv[]) {
 				fm.output << "Time:\t" << time << "\t\tTask " << cur_task.name << " complete" << endl;
 			}
 			prev_task = cur_task;
+			// start periodic tasks as highest priority
 			if (!release_q.empty()) {
 				cur_task = release_q.front();
 				release_q.pop();
@@ -80,6 +81,7 @@ void rate_monotonic(int argc, char *argv[]) {
 				fm.output << "Time:\t" << time << "\t\tTask " << cur_task.name << " resume execution";
 				fm.output << "\t exe time: " << cur_exe_time_left + 1 << endl;
 			}
+			// start aperiodic tasks if there is slack time
 			else if (!release_aq.empty()) {
 				cur_task = release_aq.front();
 				release_aq.pop();
@@ -111,8 +113,38 @@ void rate_monotonic(int argc, char *argv[]) {
 		fm.output << check_a_deadline(release_q, time, &missed_deadlines);
 	}
 	
+	// print footer header
 	fm.output << "Time:\t" << fm.get_sim_time() << "\t\tEnd of sim time " << endl;
 	fm.output << endl << "****************************************" << endl;
-	fm.output << "Missed Deadlines: " << missed_deadlines << endl;
-	fm.output << "Preemptions: " << preemptions << endl;
+	fm.output << "Summary" << endl;
+	fm.output << "****************************************" << endl;
+	
+	// print missed deadlines in footer
+	for (int i = 0; i < tasks.size(); i++) {
+		int count = 0;
+		for (int j = 0; j < missed_deadlines.size(); j++) {
+			if (tasks[i].name == missed_deadlines[j]) {
+				count++;
+			}
+		}
+		if (count != 0) {
+			fm.output << "Task " << tasks[i].name << " missed " << count << " deadlines" << endl;
+		}
+	}
+
+	for (int i = 0; i < a_tasks.size(); i++) {
+		int count = 0;
+		for (int j = 0; j < missed_deadlines.size(); j++) {
+			if (a_tasks[i].name == missed_deadlines[j]) {
+				count++;
+			}
+		}
+		if (count != 0) {
+			fm.output << "Task " << a_tasks[i].name << " missed " << count << " deadlines" << endl;
+		}
+	}
+
+	// print footer totals
+	fm.output << endl << "Total Missed Deadlines: " << missed_deadlines.size() << endl;
+	fm.output << "Total Preemptions: " << preemptions << endl;
 }

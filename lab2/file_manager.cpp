@@ -3,6 +3,8 @@
 FileManager::FileManager(int argc, char *argv[]) {			
 	string temp_str;
 	vector<string> lines;
+	num_tasks = 0;
+	num_a_tasks = 0;
 
 	// Check to make sure the user gave an input and an output file name to be used.
 	if(argc != 3){

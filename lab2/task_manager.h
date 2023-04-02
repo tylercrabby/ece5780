@@ -26,7 +26,7 @@ bool compare_task(const task t1, const task t2);
 bool is_task_equal(const task t1, const task t2);
 string release_tasks(queue<task>* q, vector<task> tasks, int time);
 string release_a_tasks(queue<task>* q, vector<task> tasks, int time);
-string check_deadline(task cur_task, queue<task> q, int time, int* missed);
-string check_a_deadline(queue<task> q, int time, int* missed);
+string check_deadline(task cur_task, queue<task> q, int time, vector<char>* missed);
+string check_a_deadline(queue<task> q, int time, vector<char>* missed);
 
 #endif

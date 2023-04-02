@@ -1,3 +1,3 @@
 clear
-g++ *.cpp
-./a.out input.txt output.txt
+g++ *.cpp -o scheduler.exe
+./scheduler.exe input.txt output.txt

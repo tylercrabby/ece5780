@@ -54,16 +54,16 @@ string release_a_tasks(queue<task>* q, vector<task> tasks, int time) {
 }
 
 // checks the deadlines of the released periodic tasks
-string check_deadline(task cur_task, queue<task> q, int time, int* missed) {
+string check_deadline(task cur_task, queue<task> q, int time, vector<char>* missed) {
 	string result = "";
 	if (cur_task.task_state == time && !q.empty()) {
 		result += "Time:\t" + to_string(time) + "\t\tTask " + cur_task.name + " missed its deadline\n";
-		*missed += 1;
+		missed->push_back(cur_task.name);
 	}
 	while (!q.empty()) {
 		if (q.front().task_state == time) {
 			result += "Time:\t" + to_string(time) + "\t\tTask " + q.front().name + " missed its deadline\n";
-			*missed += 1;
+			missed->push_back(cur_task.name);
 		}
 		q.pop();
 	}
@@ -71,12 +71,12 @@ string check_deadline(task cur_task, queue<task> q, int time, int* missed) {
 }
 
 // checks the deadlines of the release aperiodic tasks
-string check_a_deadline(queue<task> q, int time, int* missed) {
+string check_a_deadline(queue<task> q, int time, vector<char>* missed) {
 	string result = "";
 	while (!q.empty()) {
 		if (q.front().task_state == time) {
 			result += "Time:\t" + to_string(time) + "\t\tTask " + q.front().name + " missed its deadline\n";
-			*missed += 1;
+			missed->push_back(q.front().name);
 		}
 		q.pop();
 	}
