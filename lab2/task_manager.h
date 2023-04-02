@@ -16,7 +16,7 @@ typedef struct {
 	int period;
 
 	// We need a variable to track which state this task has been in.
-	int task_state = 0;
+	int task_state;
 	bool is_a;
 } task;
 
